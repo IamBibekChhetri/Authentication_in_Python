@@ -45,3 +45,18 @@ def signout(request):
     logout(request)
     messages.success(request,"You have been log out successfully")
     return redirect('home')
+
+
+def profile(request):
+
+    return render(request,"authentication/profile.html")
+
+
+def changePassword(request):
+
+    return render(request,"authentication/changePassword.html")
+
+
+def resetPassword(request):
+
+    return render(request,"authentication/resetPassword.html")

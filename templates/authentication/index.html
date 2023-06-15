@@ -20,6 +20,12 @@
     {% if user.is_authenticated %}
     <h4>You are logged in</h4>
     <button type="submit"><a href="/signout"> SignOut</a></button>
+
+    <button type="submit"><a href="/profile">Go to Profile</a></button>
+
+    <button type="submit"><a href="/changePassword">Change Password</a></button>
+
+    <button type="submit"><a href="/resetPassword">Reset Password</a></button>
     {% else %}
     <button type="submit"><a href="/signup"> SignUp</a></button>
     <button type="submit"><a href="/signin"> SignIn</a></button>
