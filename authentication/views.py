@@ -1,4 +1,5 @@
 
+from .models import Profile
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib import messages
@@ -15,7 +16,8 @@ def signup(request):
         username=request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user=CustomUser.objects.create_user(username=username,password=password,email=email)
+        phone = request.POST.get('phone')
+        user=CustomUser.objects.create_user(username=username,password=password,email=email,phone=phone)
         user.save()
         # print("Your Account has been created successfully!")
         messages.success(request,"Your Account has been created successfully")
@@ -48,8 +50,13 @@ def signout(request):
 
 
 def profile(request):
-
-    return render(request,"authentication/profile.html")
+    user=CustomUser.objects.get(id=request.user.id)
+    profile = Profile.objects.filter(user=user).values('image')
+    img =""
+    for pf in profile:
+        img = pf
+    context={'user':user,'profile':img}
+    return render(request,"profile.html",context)
 
 
 def changePassword(request):

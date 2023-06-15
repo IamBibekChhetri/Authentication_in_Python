@@ -5,9 +5,8 @@ class CustomUser(AbstractUser):
     # Add your custom fields here
     # username = None
     email = models.EmailField(unique=True)
-    additional_field = models.CharField(max_length=100)
+    fullname = models.CharField(max_length=100,default="")
     phone = models.CharField(max_length=10, null=False)
-    image = models.ImageField(max_length=100)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -17,6 +16,6 @@ class Profile(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
     )
-    image = models.ImageField(upload_to="profileImage")
+    image = models.ImageField(upload_to="authentication/image/")
     
     
