@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+</head>
+<body>
+    <form action="/emailVerification/" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <div class="row">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" placeholder="Enter your email" name="email">
+                </div>
+
+                <div class="button">
+                    <input type="submit" value="Send OTP">
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</body>
+</html>

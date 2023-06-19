@@ -109,6 +109,15 @@ def changePassword(request):
             messages.error(request, 'Incorrect old password.')
 
     return render(request, 'authentication/changePassword.html')
+
+def emailVerification(request):
+
+    return render(request,'authentication/emailVerification')
+
+def otpVerification(request):
+
+    return render(request,'authentication/otpVerification')
+
 # Reset Password
 # def resetPassword(request):
 #     if request.method == 'POST':
