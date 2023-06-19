@@ -86,19 +86,29 @@ def profile(request):
     return render(request, 'authentication/profile.html', {'user': request.user, 'profile':profile})
 
 # Change Password
-# @login_required
+@login_required
 def changePassword(request):
-    # if request.method == 'POST':
-    #     form = PasswordChangeForm(user=request.user, data=request.POST)
-    #     if form.is_valid():
-    #         user = form.save()
-    #         update_session_auth_hash(request, user)
-    #         messages.success(request, 'Your password was successfully changed.')
-    #         return redirect('changePassword')
-    # else:
-    #     form = PasswordChangeForm(user=request.user)
-    return render(request, 'authentication/changePassword.html')
+    if request.method == 'POST':
+        old_password = request.POST['old_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
 
+        user = request.user
+
+        if user.check_password(old_password):
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                # Update session authentication hash to prevent logging out the user
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Password changed successfully.')
+                return redirect('home')  # Replace 'home' with the desired URL after password change
+            else:
+                messages.error(request, 'New password and confirm password do not match.')
+        else:
+            messages.error(request, 'Incorrect old password.')
+
+    return render(request, 'authentication/changePassword.html')
 # Reset Password
 # def resetPassword(request):
 #     if request.method == 'POST':
