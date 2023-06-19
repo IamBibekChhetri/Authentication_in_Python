@@ -37,9 +37,8 @@
           <form action="/profile/" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
-              {% if Profile.image %}
-              <img src="{{ profile.image }}" />
-              {% endif %}
+              <img src="{{ profile.image.url }}" style="height: 100px; width: 100px;border-radius: 50%;">
+
               <input class="form-control" type="file" name="image" />
             </div>
 
