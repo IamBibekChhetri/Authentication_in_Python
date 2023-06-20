@@ -13,9 +13,12 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     fullname = models.CharField(max_length=100,default="")
     phone = models.CharField(max_length=10, null=False)
+    
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+
+# Profile updating profile image
 
 class Profile(models.Model):
     user = models.OneToOneField(
@@ -36,4 +39,10 @@ class Profile(models.Model):
             except sender.DoesNotExist:
                 pass
     
-    
+# OTP models updating otp after email verification
+class otp(models.Model):
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+    )
+    otp = models.CharField(max_length=6,null=True)

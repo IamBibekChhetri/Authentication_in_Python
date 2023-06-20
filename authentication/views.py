@@ -6,6 +6,11 @@ from authentication.models import CustomUser
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth import update_session_auth_hash
 from authentication.models import Profile
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+from django.conf import settings
+from authentication.models import otp
+
 
 # Create your views here.
 def home(request):
@@ -110,13 +115,45 @@ def changePassword(request):
 
     return render(request, 'authentication/changePassword.html')
 
+# Email verification for resetting password
 def emailVerification(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+    # verifying the email first.
+        user = CustomUser.objects.filter(email=email).first()
+        if user:
+            # Generate a random OTP code
+            otp = get_random_string(length=6, allowed_chars='0123456789')
 
-    return render(request,'authentication/emailVerification')
+            # Create an OTP token
+            otp_token, created = otp.objects.get_or_create(user=user)
+            otp_token.code = otp
+            otp_token.save()
 
+            # Compose the email subject and message
+            subject = 'OTP Code for Email Verification'
+            message = f'Your OTP code for email verification is: {otp}'
+
+            # Send the email
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+
+            # Store the email in the session for verification
+            request.session['otp_email'] = email
+
+            messages.success(request, 'Please check your email for the OTP code.')
+            return redirect('otpVerification')  
+        # Replace 'verifyOTP' with the desired URL for OTP verification
+
+        else:
+            messages.error(request, 'Email address not found.')
+
+
+    return render(request,'authentication/emailVerification.html')
+
+#Otp verification after email verification for password reset
 def otpVerification(request):
 
-    return render(request,'authentication/otpVerification')
+    return render(request,'authentication/otpVerification.html')
 
 # Reset Password
 # def resetPassword(request):
