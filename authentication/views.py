@@ -9,7 +9,7 @@ from authentication.models import Profile
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.conf import settings
-from authentication.models import otp
+from authentication.models import Otp
 
 
 # Create your views here.
@@ -123,22 +123,24 @@ def emailVerification(request):
         user = CustomUser.objects.filter(email=email).first()
         if user:
             # Generate a random OTP code
-            otp = get_random_string(length=6, allowed_chars='0123456789')
+            code = get_random_string(length=6, allowed_chars='0123456789')
 
             # Create an OTP token
-            otp_token, created = otp.objects.get_or_create(user=user)
-            otp_token.code = otp
+            otp_token, create = Otp.objects.get_or_create(user=user)
+            otp_token.otp_code = code
             otp_token.save()
 
             # Compose the email subject and message
             subject = 'OTP Code for Email Verification'
-            message = f'Your OTP code for email verification is: {otp}'
+            message = f'Your OTP code for email verification is: {code}'
 
             # Send the email
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
 
             # Store the email in the session for verification
             request.session['otp_email'] = email
+            # request.session['otp_code'] = otp_token
+            # print(otp_token)
 
             messages.success(request, 'Please check your email for the OTP code.')
             return redirect('otpVerification')  
@@ -150,20 +152,43 @@ def emailVerification(request):
 
     return render(request,'authentication/emailVerification.html')
 
-#Otp verification after email verification for password reset
-def otpVerification(request):
+# Otp Verification
 
+def otpVerification(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        stored_otp = request.session.get('otp_code')
+        if entered_otp == stored_otp:
+            email = request.session.get('otp_email')
+            user = CustomUser.objects.get(email=email)
+            # Perform your desired actions for successful OTP verification
+            messages.success(request, 'OTP verified successfully.')
+            return redirect('home')  # Replace 'home' with the desired URL after successful verification
+        else:
+            messages.error(request, 'Invalid OTP code.')
     return render(request,'authentication/otpVerification.html')
 
 # Reset Password
-# def resetPassword(request):
-#     if request.method == 'POST':
-#         form = SetPasswordForm(user=request.user, data=request.POST)
-#         if form.is_valid():
-#             form.save()
-#             update_session_auth_hash(request, form.user)
-#             messages.success(request, 'Your password was successfully reset.')
-#             return redirect('resetPassword')
-#     else:
-#         form = SetPasswordForm(user=request.user)
-#     return render(request, 'authentication/resetPassword.html', {'form': form})
+def resetPassword(request):
+    '''
+    if request.method == 'POST':
+        form = SetPasswordForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, 'Your password was successfully reset.')
+            return redirect('resetPassword')
+    else:
+        form = SetPasswordForm(user=request.user)'''
+    return render(request, 'authentication/resetPassword.html')
+#Otp verification after email verification for password reset
+
+    '''
+    if request.method == 'POST':
+        otp = request.POST['otp_submit']
+        print(otp)
+        db_otp=Otp.objects.filter('otp_code')
+        if otp==db_otp:
+            return redirect('resetPassword')'''
+    # print("roshni")
+    

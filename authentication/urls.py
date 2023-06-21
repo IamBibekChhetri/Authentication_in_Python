@@ -11,5 +11,5 @@ urlpatterns = [
     path('changePassword/',views.changePassword,name="changePassword"),
     path('emailVerification/',views.emailVerification,name="emailVerification"),
     path('otpVerification',views.otpVerification,name="otpVerification"),
-    # path('resetPassword/',views.resetPassword,name="resetPassword"),
+    path('resetPassword/',views.resetPassword,name="resetPassword"),
 ]

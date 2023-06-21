@@ -40,9 +40,10 @@ class Profile(models.Model):
                 pass
     
 # OTP models updating otp after email verification
-class otp(models.Model):
+class Otp(models.Model):
     user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
     )
-    otp = models.CharField(max_length=6,null=True)
+    otp_code = models.CharField(max_length=6,null=True)
+
